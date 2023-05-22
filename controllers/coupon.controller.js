@@ -1,39 +1,34 @@
-const Category = require("../models/category.model");
-const subCategory = require("../models/subcategory.model");
-exports.createSubCategory = async (req, res) => {
+const coupon = require("../models/coupon.model");
+exports.createCoupon = async (req, res) => {
     try {
-        const data = await Category.findById(req.body.categoryId);
-        if (!data || data.length === 0) {
-            return res.status(400).send({ msg: "not found" });
+        if (!req.body.discount) {
+            return res.status(400).send("please enter discount");
         }
-        let image;
-        if (req.file) {
-            image = req.file.filename;
+        if (!req.body.couponCode) {
+            return res.status(400).send("please enter couponCode");
         }
-        const subcategory = {
-            userId: req.user._id,
-            name: req.body.name,
-            image: image,
-            categoryId: data._id,
-        };
-        const subcategoryCreated = await subCategory.create(subcategory);
-        console.log(
-            `#### Sub Category add successfully #### /n ${subcategoryCreated} `
-        );
+        if (!req.body.activationDate) {
+            return res.status(400).send("please enter activationDate");
+        }
+        if (!req.body.expiryDate) {
+            return res.status(400).send("please enter expiryDate");
+        }
+        const couponCreated = await coupon.create(req.body);
+        console.log(`#### Coupon add successfully #### /n ${couponCreated} `);
         res.status(201).send({
-            message: "Sub Category add successfully",
-            data: subcategoryCreated,
+            message: "Coupon add successfully",
+            data: couponCreated,
         });
     } catch (err) {
-        console.log("#### error while sub Category create #### ", err.message);
+        console.log("#### error while Coupon create #### ", err.message);
         res.status(500).send({
-            message: "Internal server error while creating sub category",
+            message: "Internal server error while creating coupon",
         });
     }
 };
 exports.get = async (req, res) => {
     try {
-        const data = await subCategory.find();
+        const data = await coupon.find();
         if (!data || data.length === 0) {
             return res.status(400).send({ msg: "not found" });
         }
@@ -48,7 +43,7 @@ exports.get = async (req, res) => {
 };
 exports.getId = async (req, res) => {
     try {
-        const data = await subCategory.findById(req.params.id);
+        const data = await coupon.findById(req.params.id);
         if (!data || data.length === 0) {
             return res.status(400).send({ msg: "not found" });
         }
@@ -63,18 +58,10 @@ exports.getId = async (req, res) => {
 };
 exports.update = async (req, res) => {
     try {
-        const findCategory = await Category.findById(req.body.categoryId);
-        if (!findCategory || findCategory.length === 0) {
-            return res.status(400).send({ msg: "not found" });
-        }
-        if (req.file) {
-            req.body.image = req.file.filename;
-        }
-        const data = await subCategory.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true }
-        );
+        console.log(req.params.id);
+        const data = await coupon.findByIdAndUpdate(req.params.id, req.body, {
+            new: true,
+        });
         if (!data) {
             return res.status(400).send({ msg: "not found" });
         }
@@ -87,9 +74,10 @@ exports.update = async (req, res) => {
         });
     }
 };
+
 exports.delete = async (req, res) => {
     try {
-        const data = await subCategory.findByIdAndDelete(req.params.id);
+        const data = await coupon.findByIdAndDelete(req.params.id);
         if (!data) {
             return res.status(400).send({ msg: "not found" });
         }

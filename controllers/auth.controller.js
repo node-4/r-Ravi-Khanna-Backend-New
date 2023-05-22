@@ -99,16 +99,17 @@ exports.verifyOtp = async (req, res) => {
 
 exports.resendOTP = async (req, res) => {
     const { id } = req.params;
-
     try {
         // Check if the user already exists in the database
         const user = await User.findOne({ _id: id });
         if (!user) {
             return res.status(400).send({ message: "User not found" });
         }
-
-        // Generate a new OTP and update the OTP and OTP expiration time in the database
-        const otp = generateOTP();
+        const otp =  newOTP.generate(4, {
+            alphabets: false,
+            upperCase: false,
+            specialChar: false,
+        });
         const otpExpiration = new Date(Date.now() + 5 * 60 * 1000); // OTP expires in 5 minutes
         const updated = await User.findOneAndUpdate(
             { _id: id },
@@ -116,9 +117,6 @@ exports.resendOTP = async (req, res) => {
             { new: true }
         );
         console.log(updated);
-        // Send the new OTP to the user's phone number
-        // await sendOTP(phone, otp);
-
         res.status(200).send({ message: "OTP resent", otp: otp });
     } catch (error) {
         console.error(error);
