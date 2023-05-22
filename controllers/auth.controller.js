@@ -8,31 +8,9 @@ const authConfig = require("../configs/auth.config");
 exports.signup = async (req, res) => {
     try {
         const data = {
-            name: req.body.name,
             email: req.body.email,
-            phone: req.body.phone,
             password: bcrypt.hashSync(req.body.password, 8),
-            referalcode: newOTP.generate(16, {
-                alphabets: true,
-                upperCase: true,
-                specialChar: true,
-            }),
-            image: req.body.image,
         };
-        if (req.body.referalcode) {
-            const user1 = await User.findOne({
-                referalcode: req.body.referalcode,
-            });
-            user1.wallet.cash += 5;
-            await user1.save();
-        }
-
-        // await User.createIndex({ email: 1, phone: 1 }, { unique: true }, (err, result) => {
-        //     if (err) {
-        //         console.error(err);
-        //         return;
-        //     }
-        // });
         const user = await User.create(data);
         res.status(201).send({
             message: "registered successfully ",
@@ -51,11 +29,18 @@ exports.loginWithPhone = async (req, res) => {
         const user = await User.findOne({ phone });
         if (!user) {
             const userObj = {};
-            userObj.phone= phone;
-            userObj.otp = newOTP.generate(4, {alphabets: false,upperCase: false,specialChar: false,});
+            userObj.phone = phone;
+            userObj.otp = newOTP.generate(4, {
+                alphabets: false,
+                upperCase: false,
+                specialChar: false,
+            });
             userObj.otpExpiration = new Date(Date.now() + 5 * 60 * 1000);
             const user = await User.create(userObj);
-            res.status(201).send({message: "registered successfully ",data: user,});
+            res.status(201).send({
+                message: "registered successfully ",
+                data: user,
+            });
         }
         const userObj = {};
         userObj.otp = newOTP.generate(4, {
@@ -66,7 +51,9 @@ exports.loginWithPhone = async (req, res) => {
         userObj.otpExpiration = new Date(Date.now() + 5 * 60 * 1000); // OTP expires in 5 minutes
         // const newUser = new User({ phone, otp, otpExpiration });
         // Delete the OTP from the database
-        const updated = await User.findOneAndUpdate({phone: phone,},userObj,{ new: true });
+        const updated = await User.findOneAndUpdate({ phone: phone }, userObj, {
+            new: true,
+        });
         res.status(200).send({
             userId: updated._id,
             otp: updated.otp,
