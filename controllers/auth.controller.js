@@ -28,15 +28,19 @@ exports.signupWithPhone = async (req, res) => {
         if (!user) {
             const userObj = {};
             userObj.phone = phone;
-            userObj.otp = newOTP.generate(4, {alphabets: false,upperCase: false,specialChar: false,});
+            userObj.otp = newOTP.generate(4, {
+                alphabets: false,
+                upperCase: false,
+                specialChar: false,
+            });
             userObj.otpExpiration = new Date(Date.now() + 5 * 60 * 1000);
             const user = await User.create(userObj);
-            res.status(200).send({message: "registered successfully ",data: user,});
-        }else{
-            res.status(409).send({
-                message: "Already Exist",
+            res.status(200).send({
+                message: "registered successfully ",
                 data: user,
             });
+        } else {
+            res.status(409).send({ message: "Already Exist", data: [] });
         }
     } catch (error) {
         console.error(error);
