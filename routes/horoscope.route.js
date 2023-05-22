@@ -1,31 +1,12 @@
-const express = require('express');
-const router = express.Router();
-const horoscopeController = require('../controllers/horoscope');
+const horoscopeController = require('../controllers/horoscope.controller');
 const { authJwt, objectId } = require('../middlewares');
-
-// Admin routes
-
-// GET all horoscopes
-router.get('/admin/horoscopes', authJwt.isAdmin, horoscopeController.getHoroscopes);
-
-// GET a single horoscope by ID
-router.get('/admin/horoscopes/:id', [authJwt.isAdmin, objectId.validId], horoscopeController.getHoroscopeById);
-
-// CREATE a new horoscope
-router.post('/createHoroscopes', horoscopeController.createHoroscope);
-
-// UPDATE a horoscope by ID
-router.put('/admin/horoscopes/:id', [authJwt.isAdmin, objectId.validId], horoscopeController.updateHoroscopeById);
-
-// DELETE a horoscope by ID
-router.delete('/admin/horoscopes/:id', [authJwt.isAdmin, objectId.validId], horoscopeController.deleteHoroscopeById);
-
-// User routes
-
-// GET all horoscopes
-router.get('/horoscopes', horoscopeController.getHoroscopes);
-
-// GET a single horoscope by ID
-router.get('/horoscopes/:id', [objectId.validId], horoscopeController.getHoroscopeById);
-
-module.exports = router;
+module.exports = (app) => {
+    app.post('/api/v1/createHoroscopes', horoscopeController.createHoroscope);
+    app.post('/api/v1/admin/horoscopes', authJwt.isAdmin, horoscopeController.getHoroscopes);
+    app.get('/api/v1/admin/horoscopes/:id', [authJwt.isAdmin, objectId.validId], horoscopeController.getHoroscopeById);
+    app.put('/api/v1/admin/horoscopes/:id', [authJwt.isAdmin, objectId.validId], horoscopeController.updateHoroscopeById);
+    app.delete('/api/v1/admin/horoscopes/:id', [authJwt.isAdmin, objectId.validId], horoscopeController.deleteHoroscopeById);
+    app.get('/api/v1/horoscopes', horoscopeController.getHoroscopes);
+    app.get('/api/v1/horoscopes/:id', [objectId.validId], horoscopeController.getHoroscopeById);
+    
+};

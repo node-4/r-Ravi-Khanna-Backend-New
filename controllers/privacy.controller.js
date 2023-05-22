@@ -5,7 +5,7 @@ const TermsAndConditions = require("../models/terms.model");
 exports.getAllTerms = async (req, res, next) => {
     try {
         const termsAndConditions = await TermsAndConditions.find({
-            type: "TERMS&CONDITION",
+            type: "PRIVACY POLICY",
         });
         if (termsAndConditions.length === 0) {
             throw httpError(404, "Terms and conditions not found");
@@ -42,7 +42,7 @@ exports.createTerm = async (req, res, next) => {
             throw httpError(400, "Content is required");
         }
         const Obj = {
-            type: "TERMS&CONDITION",
+            type: "PRIVACY POLICY",
             content: content,
         };
         const termsAndConditions = await TermsAndConditions.create(Obj);

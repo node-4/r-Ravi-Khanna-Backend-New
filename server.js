@@ -6,6 +6,7 @@ require("dotenv").config();
 const compression = require("compression");
 const serverless = require("serverless-http");
 const app = express();
+const path = require("path");
 app.use(compression({ threshold: 500 }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -28,18 +29,19 @@ require("./routes/category.route")(app);
 require("./routes/subcategory.route")(app);
 require("./routes/submission.rotue")(app);
 require("./routes/coupon.route")(app);
+require("./routes/horoscope.route")(app);
 require("./routes/product.route")(app);
+require("./routes/offer.route")(app);
 app.use('/api/v1/', require("./routes/voucher.route"));
-app.use('/api/v1/', require("./routes/horoscope.route"));
 app.use('/api/v1/', require("./routes/kundali.route"));
 app.use('/api/v1/', require("./routes/terms.route"));
+app.use('/api/v1/', require("./routes/privacy.route"));
 app.use('/api/v1/', require("./routes/feedback.route"));
 app.use('/api/v1/', require("./routes/order.route"));
 require("./routes/notification.route")(app);
 require("./routes/faq.route")(app);
 require("./routes/payment.route")(app);
-
-
+app.use('/uploads', express.static(path.join(__dirname, './uploads')))
 mongoose.Promise = global.Promise;
 mongoose.set("strictQuery", true);
 

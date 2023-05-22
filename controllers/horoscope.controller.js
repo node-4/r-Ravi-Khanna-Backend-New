@@ -1,13 +1,13 @@
-const Horoscope = require("../models/horoscope.model");
-const createError = require("http-errors");
-// Create a horoscope
+const Horoscope = require("../models/horoscope.model"); // Create a horoscope
 exports.createHoroscope = async (req, res) => {
     try {
         if (!req.body.horoscope) {
             return res.status(400).json({ message: "Horoscope is required" });
         }
         if (!req.body.professional) {
-            return res.status(400).json({ message: "Professional is required" });
+            return res
+                .status(400)
+                .json({ message: "Professional is required" });
         }
         const horoscopeObj = {
             horoscope: req.body.horoscope,
@@ -20,16 +20,16 @@ exports.createHoroscope = async (req, res) => {
             rashi: req.body.rashi,
             date: new Date(),
         };
-        const horoscope = new Horoscope(horoscopeObj);
-        await horoscopescope.save();
-        res.status(201).json(horoscope);
+        const horoscopeCreated = await Horoscope.create(horoscopeObj);
+        res.status(200).send({
+            message: "horoscope add successfully",
+            data: horoscopeCreated,
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Something went wrong" });
     }
 };
-
-// Get all horoscopes
 exports.getHoroscopes = async (req, res) => {
     try {
         const horoscopes = await Horoscope.find();
@@ -37,28 +37,29 @@ exports.getHoroscopes = async (req, res) => {
             // throw createError(404, 'Horoscope not found');
             return res.status(404).json({ message: "Horoscopes not found" });
         }
-        res.status(200).json(horoscopes);
+        res.status(200).send({
+            message: "Horoscope data found successfully",
+            data: horoscopes,
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Something went wrong" });
     }
 };
-
-// Get a horoscope by ID
 exports.getHoroscopeById = async (req, res) => {
     try {
         const horoscope = await Horoscope.findById(req.params.id);
         if (!horoscope) {
             return res.status(404).json({ message: "Horoscope not found" });
         }
-        res.status(200).json(horoscope);
-    } catch (error) {
+        res.status(200).send({
+            message: "Horoscope data found successfully",
+            data: horoscope,
+        });    } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Something went wrong" });
     }
 };
-
-// Update a horoscope by ID
 exports.updateHoroscopeById = async (req, res) => {
     try {
         const horoscope = await Horoscope.findByIdAndUpdate(
@@ -75,8 +76,6 @@ exports.updateHoroscopeById = async (req, res) => {
         res.status(500).json({ message: "Something went wrong" });
     }
 };
-
-// Delete a horoscope by ID
 exports.deleteHoroscopeById = async (req, res) => {
     try {
         const horoscope = await Horoscope.findByIdAndDelete(req.params.id);
