@@ -27,7 +27,6 @@ require("./routes/quiz.route")(app);
 require("./routes/category.route")(app);
 require("./routes/subcategory.route")(app);
 require("./routes/submission.rotue")(app);
-require("./routes/horoscope.route")(app);
 require("./routes/coupon.route")(app);
 require("./routes/product.route")(app);
 app.use('/api/v1/', require("./routes/voucher.route"));
