@@ -25,6 +25,7 @@ require("./routes/blog.route")(app);
 require("./routes/predict.route")(app);
 require("./routes/quiz.route")(app);
 require("./routes/category.route")(app);
+require("./routes/subcategory.route")(app);
 require("./routes/submission.rotue")(app);
 app.use('/api/v1/', require("./routes/voucher.route"));
 app.use('/api/v1/', require("./routes/horoscope.route"));

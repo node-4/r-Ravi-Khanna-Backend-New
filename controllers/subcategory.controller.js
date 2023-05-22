@@ -2,7 +2,7 @@ const Category = require("../models/category.model");
 const subCategory = require("../models/subcategory.model");
 exports.createSubCategory = async (req, res) => {
     try {
-        const data = await Category.findById(req.params.id);
+        const data = await Category.findById(req.body.categoryId);
         if (!data || data.length === 0) {
             return res.status(400).send({ msg: "not found" });
         }
@@ -63,12 +63,14 @@ exports.getId = async (req, res) => {
 };
 exports.update = async (req, res) => {
     try {
+        const findCategory = await Category.findById(req.body.categoryId);
+        if (!findCategory || findCategory.length === 0) {
+            return res.status(400).send({ msg: "not found" });
+        }
         if (req.file) {
             req.body.image = req.file.filename;
         }
-        const data = await subCategory.findByIdAndUpdate(req.params.id, req.body, {
-            new: true,
-        });
+        const data = await subCategory.findByIdAndUpdate(req.params.id,req.body,{new: true,});
         if (!data) {
             return res.status(400).send({ msg: "not found" });
         }

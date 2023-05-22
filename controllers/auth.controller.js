@@ -21,26 +21,35 @@ exports.signup = async (req, res) => {
         res.status(500).send({ error: "internal server error " + err.message });
     }
 };
-exports.loginWithPhone = async (req, res) => {
+exports.signupWithPhone = async (req, res) => {
     const { phone } = req.body;
-
     try {
-        // Find the user in the database
         const user = await User.findOne({ phone });
         if (!user) {
             const userObj = {};
             userObj.phone = phone;
-            userObj.otp = newOTP.generate(4, {
-                alphabets: false,
-                upperCase: false,
-                specialChar: false,
-            });
+            userObj.otp = newOTP.generate(4, {alphabets: false,upperCase: false,specialChar: false,});
             userObj.otpExpiration = new Date(Date.now() + 5 * 60 * 1000);
             const user = await User.create(userObj);
-            res.status(201).send({
-                message: "registered successfully ",
+            res.status(200).send({message: "registered successfully ",data: user,});
+        }else{
+            res.status(409).send({
+                message: "Already Exist",
                 data: user,
             });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
+    }
+};
+exports.loginWithPhone = async (req, res) => {
+    const { phone } = req.body;
+    try {
+        // Find the user in the database
+        const user = await User.findOne({ phone });
+        if (!user) {
+            return res.status(400).send({ msg: "not found" });
         }
         const userObj = {};
         userObj.otp = newOTP.generate(4, {
@@ -49,8 +58,6 @@ exports.loginWithPhone = async (req, res) => {
             specialChar: false,
         });
         userObj.otpExpiration = new Date(Date.now() + 5 * 60 * 1000); // OTP expires in 5 minutes
-        // const newUser = new User({ phone, otp, otpExpiration });
-        // Delete the OTP from the database
         const updated = await User.findOneAndUpdate({ phone: phone }, userObj, {
             new: true,
         });
@@ -63,7 +70,6 @@ exports.loginWithPhone = async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 };
-
 exports.verifyOtp = async (req, res) => {
     try {
         const { otp } = req.body;
