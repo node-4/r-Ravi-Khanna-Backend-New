@@ -20,22 +20,8 @@ const isValidEmail = (email) => {
 
 async function userFields(req, res, next) {
     try {
-        const { name, phone, email, password } = req.body;
+        const { email, password } = req.body;
         const missingFields = [];
-
-        if (!name) {
-            missingFields.push('name');
-        }
-
-        if (!phone) {
-            missingFields.push('phone');
-        }
-        const user = await User.findOne({ phone: phone });
-
-        if (user) {
-            return res.status(409).send({ error: 'Phone number already registered' });
-        }
-
         if (!email) {
             missingFields.push('email');
         }

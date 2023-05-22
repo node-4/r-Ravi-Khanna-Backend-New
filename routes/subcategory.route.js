@@ -14,13 +14,22 @@ const upload = multer({ storage: storage });
 
 module.exports = (app) => {
     app.get("/api/v1/admin/subcategory/:id", subcategoryController.getId);
-    app.get("/api/v1/admin/subcategory", subcategoryController.get);
-    app.post("/api/v1/admin/createSubcategory",upload.single("image"),[authJwt.isAdmin],subcategoryController.createSubCategory);
-    app.patch("/api/v1/admin/subcategory/:id",[authJwt.isAdmin, objectId.validId],subcategoryController.update);
+    app.post("/api/v1/admin/subcategory", subcategoryController.get);
+    app.post(
+        "/api/v1/admin/createSubcategory",
+        upload.single("image"),
+        [authJwt.isAdmin],
+        subcategoryController.createSubCategory
+    );
+    app.patch(
+        "/api/v1/admin/subcategory/:id",
+        upload.single("image"),
+        [authJwt.isAdmin, objectId.validId],
+        subcategoryController.update
+    );
     app.delete(
         "/api/v1/admin/subcategory/:id",
         [authJwt.isAdmin, objectId.validId],
         subcategoryController.delete
     );
-
 };

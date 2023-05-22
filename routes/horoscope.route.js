@@ -12,7 +12,7 @@ router.get('/admin/horoscopes', authJwt.isAdmin, horoscopeController.getHoroscop
 router.get('/admin/horoscopes/:id', [authJwt.isAdmin, objectId.validId], horoscopeController.getHoroscopeById);
 
 // CREATE a new horoscope
-router.post('/horoscopes', horoscopeController.createHoroscope);
+router.post('/createHoroscopes', horoscopeController.createHoroscope);
 
 // UPDATE a horoscope by ID
 router.put('/admin/horoscopes/:id', [authJwt.isAdmin, objectId.validId], horoscopeController.updateHoroscopeById);

@@ -117,6 +117,7 @@ exports.resendOTP = async (req, res) => {
             { new: true }
         );
         console.log(updated);
+
         res.status(200).send({ message: "OTP resent", otp: otp });
     } catch (error) {
         console.error(error);
