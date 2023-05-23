@@ -6,7 +6,6 @@ const schema = new mongoose.Schema({
     email: {
         type: String,
         minLength: 10
-
     },
     phone: {
         type: String
@@ -33,6 +32,9 @@ const schema = new mongoose.Schema({
 
     },
     referalcode: {
+        type: String
+    },
+    kyc: {
         type: String
     },
     image: {
