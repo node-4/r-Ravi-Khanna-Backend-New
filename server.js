@@ -41,7 +41,6 @@ app.use('/api/v1/', require("./routes/order.route"));
 require("./routes/notification.route")(app);
 require("./routes/faq.route")(app);
 require("./routes/payment.route")(app);
-app.use('/uploads', express.static(path.join(__dirname, './uploads')))
 mongoose.Promise = global.Promise;
 mongoose.set("strictQuery", true);
 
