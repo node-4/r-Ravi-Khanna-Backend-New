@@ -37,6 +37,9 @@ const schema = new mongoose.Schema({
     kyc: {
         type: String
     },
+    role: {
+        type: String,
+    },
     image: {
         type: String,
     }

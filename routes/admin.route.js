@@ -29,4 +29,5 @@ module.exports = (app) => {
         [authJwt.isAdmin, objectId.validId],
         authController.get
     );
+    app.post("/api/v1/admin/auth/createUser",[authJwt.isAdmin],authController.createUser);
 };

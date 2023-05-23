@@ -1,4 +1,5 @@
 const Admin = require("../models/admin.model");
+const User = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const authConfig = require("../configs/auth.config");
@@ -155,5 +156,30 @@ exports.updateAdmin = async (req, res) => {
         res.status(500).send({
             message: "Internal server error while updating admin data",
         });
+    }
+};
+exports.createUser = async (req, res) => {
+    try {
+        if (req.body.password != req.body.confirmPassword) {
+            res.status(501).send({
+                message: "Password Not matched.",
+                data: {},
+            });
+        }
+        const data = {
+            email: req.body.email,
+            password: bcrypt.hashSync(req.body.password, 8),
+            name: req.body.name,
+            phone: req.body.phone,
+            role: req.body.role,
+        };
+        const user = await User.create(data);
+        res.status(201).send({
+            message: "registered successfully ",
+            data: user,
+        });
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).send({ error: "internal server error " + err.message });
     }
 };
