@@ -1,4 +1,5 @@
 const Voucher = require("../models/vouchers.model");
+const commonFunction = require("../middlewares/commonFunction");
 const createError = require("http-errors");
 // GET all vouchers
 const getAllVouchers = async (req, res, next) => {
@@ -31,7 +32,7 @@ const createVoucher = async (req, res, next) => {
     try {
         let image;
         if (req.file) {
-            image = req.file.filename;
+            image = await commonFunction.uploadProfileImage(req.file.path);
         }
         req.body.voucherImage = image;
         const voucher = new Voucher(req.body);
