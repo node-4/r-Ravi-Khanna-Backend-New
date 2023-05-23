@@ -165,19 +165,20 @@ exports.createUser = async (req, res) => {
                 message: "Password Not matched.",
                 data: {},
             });
+        } else {
+            const data = {
+                email: req.body.email,
+                password: bcrypt.hashSync(req.body.password, 8),
+                name: req.body.name,
+                phone: req.body.phone,
+                role: req.body.role,
+            };
+            const user = await User.create(data);
+            res.status(201).send({
+                message: "registered successfully ",
+                data: user,
+            });
         }
-        const data = {
-            email: req.body.email,
-            password: bcrypt.hashSync(req.body.password, 8),
-            name: req.body.name,
-            phone: req.body.phone,
-            role: req.body.role,
-        };
-        const user = await User.create(data);
-        res.status(201).send({
-            message: "registered successfully ",
-            data: user,
-        });
     } catch (err) {
         console.log(err.message);
         res.status(500).send({ error: "internal server error " + err.message });
