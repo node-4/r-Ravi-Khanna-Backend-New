@@ -27,14 +27,20 @@ exports.createCategory = async (req, res) => {
 };
 exports.get = async (req, res) => {
     try {
-        const data = await Category.find();
+        const data = await Category.find().populate({
+            path: "userId",
+            select: "name",
+        });
         if (!data || data.length === 0) {
             return res.status(400).send({ msg: "not found" });
         }
         res.status(200).send({ data: data });
     } catch (err) {
         console.log(err.message);
-        res.status(500).send({ msg: "internal server error ", error: err.message });
+        res.status(500).send({
+            msg: "internal server error ",
+            error: err.message,
+        });
     }
 };
 exports.getId = async (req, res) => {
@@ -46,7 +52,10 @@ exports.getId = async (req, res) => {
         res.status(200).send({ data: data });
     } catch (err) {
         console.log(err.message);
-        res.status(500).send({ msg: "internal server error ", error: err.message });
+        res.status(500).send({
+            msg: "internal server error ",
+            error: err.message,
+        });
     }
 };
 exports.update = async (req, res) => {
@@ -54,14 +63,19 @@ exports.update = async (req, res) => {
         if (req.file) {
             req.body.image = req.file.filename;
         }
-        const data = await Category.findByIdAndUpdate(req.params.id, req.body, {new: true,});
+        const data = await Category.findByIdAndUpdate(req.params.id, req.body, {
+            new: true,
+        });
         if (!data) {
             return res.status(400).send({ msg: "not found" });
         }
         res.status(200).send({ msg: "updated", data: data });
     } catch (err) {
         console.log(err.message);
-        res.status(500).send({ msg: "internal server error ", error: err.message });
+        res.status(500).send({
+            msg: "internal server error ",
+            error: err.message,
+        });
     }
 };
 
@@ -74,6 +88,9 @@ exports.delete = async (req, res) => {
         res.status(200).send({ msg: "deleted", data: data });
     } catch (err) {
         console.log(err.message);
-        res.status(500).send({ msg: "internal server error", error: err.message });
+        res.status(500).send({
+            msg: "internal server error",
+            error: err.message,
+        });
     }
 };
