@@ -58,14 +58,17 @@ exports.getId = async (req, res) => {
 };
 exports.update = async (req, res) => {
     try {
-        console.log(req.params.id);
-        const data = await coupon.findByIdAndUpdate(req.params.id, req.body, {
-            new: true,
-        });
-        if (!data) {
+        const data1 = await coupon.findById(req.params.id);
+        if(!data1){
             return res.status(400).send({ msg: "not found" });
+        }else{
+            req.body.discount= req.body.discount || req.body.discount;
+            req.body.couponCode= req.body.couponCode || req.body.couponCode;
+            req.body.activationDate= req.body.activationDate || req.body.activationDate;
+            req.body.expiryDate= req.body.expiryDate || req.body.expiryDate;
+            const data = await coupon.findByIdAndUpdate(req.params.id, req.body, {new: true,});
+            res.status(200).send({ msg: "updated", data: data });
         }
-        res.status(200).send({ msg: "updated", data: data });
     } catch (err) {
         console.log(err.message);
         res.status(500).send({
