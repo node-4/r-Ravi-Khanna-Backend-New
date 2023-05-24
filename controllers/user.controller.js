@@ -29,16 +29,14 @@ exports.update = async (req, res) => {
 
 exports.getAll = async (req, res) => {
     try {
-        const users = await User.find()
-            .lean()
-            .select({
-                _id: 1,
-                name: 1,
-                email: 1,
-                phone: 1,
-                wallet: 1,
-                referalcode: 1,
-            });
+        const users = await User.find().lean().select({
+            _id: 1,
+            name: 1,
+            email: 1,
+            phone: 1,
+            wallet: 1,
+            referalcode: 1,
+        });
         if (users.length === 0) {
             return res.status(200).send({ message: "no users found" });
         }
@@ -52,16 +50,14 @@ exports.getAll = async (req, res) => {
 };
 exports.get = async (req, res) => {
     try {
-        const users = await User.findById(req.params.id)
-            .lean()
-            .select({
-                _id: 1,
-                name: 1,
-                email: 1,
-                phone: 1,
-                wallet: 1,
-                referalcode: 1,
-            });
+        const users = await User.findById(req.params.id).lean().select({
+            _id: 1,
+            name: 1,
+            email: 1,
+            phone: 1,
+            wallet: 1,
+            referalcode: 1,
+        });
         if (!users || users.length === 0) {
             return res.status(404).send({ message: "user not found" });
         }
@@ -76,10 +72,7 @@ exports.get = async (req, res) => {
 
 exports.delete = async (req, res) => {
     try {
-        const user = await User.findByIdAndDelete(req.params.id).hint({
-            email: 1,
-            phone: 1,
-        });
+        const user = await User.findByIdAndDelete(req.params.id);
         if (!user) {
             return res
                 .status(404)
