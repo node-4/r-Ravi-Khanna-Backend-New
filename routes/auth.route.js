@@ -8,5 +8,6 @@ module.exports = (app) => {
     app.post("/api/v1/auth/signin", [validateUser.signInBody], auth.signin);
     app.post("/api/v1/auth/login/:id/verify", auth.verifyOtp);
     app.get("/api/v1/resendotp/:id", auth.resendOTP);
+    app.post("/api/v1/auth/sociallogin", auth.socialLogin);
 
 }

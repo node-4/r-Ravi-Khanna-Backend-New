@@ -96,7 +96,6 @@ exports.verifyOtp = async (req, res) => {
         res.status(500).send({ error: "internal server error" + err.message });
     }
 };
-
 exports.resendOTP = async (req, res) => {
     const { id } = req.params;
     try {
@@ -124,11 +123,10 @@ exports.resendOTP = async (req, res) => {
         res.status(500).send({ message: "Server error" + error.message });
     }
 };
-
 exports.signin = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await User.findOne({ email: req.body.email });
+        const user = await User.findOne({ email: email });
         if (!user) {
             return res
                 .status(404)
@@ -147,5 +145,41 @@ exports.signin = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).send({ message: "Server error" + error.message });
+    }
+};
+exports.socialLogin = async (req, res) => {
+    try {
+        const data = { email: req.body.email };
+        const user = await User.findOne({ email: data.email });
+        console.log(user);
+        if (!user) {
+            const user = await User.create(data);
+            const accessToken = jwt.sign(
+                { id: user.email },
+                authConfig.secret,
+                {
+                    expiresIn: "24h",
+                }
+            );
+            return res.status(200).send({
+                msg: "logged in successfully",
+                accessToken: accessToken,
+                data: user,
+            });
+        }
+        const accessToken = jwt.sign({ id: user.phone }, authConfig.secret, {
+            expiresIn: "24h",
+        });
+        res.status(200).send({
+            msg: "logged in successfully",
+            accessToken: accessToken,
+            data: user,
+        });
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).json({
+            message: "internal server error",
+            err: err.message,
+        });
     }
 };
