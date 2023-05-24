@@ -14,7 +14,7 @@ const upload = multer({ storage: storage });
 
 module.exports = (app) => {
     app.get("/api/v1/admin/category/:id", categoryController.getId);
-    app.get("/api/v1/admin/category", categoryController.get);
+    app.post("/api/v1/admin/category", categoryController.get);
     app.post(
         "/api/v1/admin/createCategory",
         upload.single("image"),
