@@ -3,7 +3,7 @@ const schema = new mongoose.Schema(
     {
         userId: {
             type: mongoose.SchemaTypes.ObjectId,
-            ref: "User",
+            ref: "Admin",
             required: true,
         },
         categoryId: {
