@@ -61,25 +61,28 @@ exports.getId = async (req, res) => {
 };
 exports.update = async (req, res) => {
     try {
-        const findCategory = await Category.findById(req.body.categoryId);
-        if (!findCategory || findCategory.length === 0) {
-            return res.status(400).send({ msg: "not found" });
+        let saveProduct = await product.findById(req.params.id);
+        if (!saveProduct) {
+            return next(new ErrorHander("Product not found", 404));
         }
-        let productImages = [];
-        if (req.files) {
-            for (let i = 0; i < req.files.length; i++) {
-                let image = req.files[i].filename;
-                productImages.push(image);
+        let findProduct = await product.findByIdAndUpdate(
+            saveProduct._id,
+            {
+                categoryId: req.body.categoryId || product.categoryId,
+                productImages: req.body.productImages|| product.productImages,
+                productName: req.body.productName || product.productName,
+                description: req.body.description || product.description,
+                price: req.body.price || product.price,
+                discount: req.body.discount|| product.discount,
+                stock: req.body.stock|| product.stock,
+            },
+            {
+                new: true,
+                runValidators: true,
+                useFindAndModify: false,
             }
-        }
-        req.body.productImages = productImages;
-        const data = await product.findByIdAndUpdate(req.params.id, req.body, {
-            new: true,
-        });
-        if (!data) {
-            return res.status(400).send({ msg: "not found" });
-        }
-        res.status(200).send({ msg: "updated", data: data });
+        );
+        res.status(200).send({ msg: "updated", data: findProduct });
     } catch (err) {
         console.log(err.message);
         res.status(500).send({
