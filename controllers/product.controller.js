@@ -15,6 +15,7 @@ exports.createProduct = async (req, res) => {
         // }
         req.body.userId = req.user._id;
         req.body.categoryId = data._id;
+        console.log(req.body);
         const productCreated = await product.create(req.body);
         console.log(`#### Product add successfully #### /n ${productCreated} `);
         res.status(201).send({
