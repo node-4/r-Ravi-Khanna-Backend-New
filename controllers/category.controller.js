@@ -1,14 +1,10 @@
 const Category = require("../models/category.model");
 exports.createCategory = async (req, res) => {
     try {
-        let image;
-        if (req.file) {
-            image = req.file.filename;
-        }
         const category = {
             userId: req.user._id,
             name: req.body.name,
-            image: image,
+            image: req.body.image,
         };
         const categoryCreated = await Category.create(category);
         console.log(
