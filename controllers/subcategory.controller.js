@@ -33,7 +33,7 @@ exports.createSubCategory = async (req, res) => {
 };
 exports.get = async (req, res) => {
     try {
-        const data = await subCategory.find();
+        const data = await subCategory.find().populate('categoryId userId');
         if (!data || data.length === 0) {
             return res.status(400).send({ msg: "not found" });
         }
