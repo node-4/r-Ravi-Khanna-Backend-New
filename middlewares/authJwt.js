@@ -21,8 +21,8 @@ const verifyToken = (req, res, next) => {
                 message: "UnAuthorised !",
             });
         }
-        const user = await User.findOne({ phone: decoded.id });
-        const user1 = await User.findOne({ email: decoded.id });
+        const user = await User.findById({ _id: decoded.id });
+        const user1 = await User.findById({ _id: decoded.id });
         if (!user && !user1) {
             return res.status(400).send({
                 message: "The user that this token belongs to does not exist",

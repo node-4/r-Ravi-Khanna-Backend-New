@@ -84,7 +84,7 @@ exports.verifyOtp = async (req, res) => {
         if (user.otp !== otp || user.otpExpiration < Date.now()) {
             return res.status(400).json({ message: "Invalid OTP" });
         }
-        const accessToken = jwt.sign({ id: user.phone }, authConfig.secret, {
+        const accessToken = jwt.sign({ id: user._id }, authConfig.secret, {
             expiresIn: authConfig.accessTokenTime,
         });
         res.status(200).send({
@@ -104,7 +104,7 @@ exports.resendOTP = async (req, res) => {
         if (!user) {
             return res.status(400).send({ message: "User not found" });
         }
-        const otp =  newOTP.generate(4, {
+        const otp = newOTP.generate(4, {
             alphabets: false,
             upperCase: false,
             specialChar: false,
