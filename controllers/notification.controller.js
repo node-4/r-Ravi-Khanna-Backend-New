@@ -12,7 +12,7 @@ exports.createNotification = async (req, res) => {
             isRead: false
         })
         // notification.notifications.push(notification);
-        // await notification.save();
+        await notification.save();
 
         res.status(201).json(notification);
     } catch (error) {

@@ -6,14 +6,10 @@ exports.createSubCategory = async (req, res) => {
         if (!data || data.length === 0) {
             return res.status(400).send({ msg: "not found" });
         }
-        let image;
-        if (req.file) {
-            image = req.file.filename;
-        }
         const subcategory = {
             userId: req.user._id,
             name: req.body.name,
-            image: image,
+            image: req.body.image,
             categoryId: data._id,
         };
         const subcategoryCreated = await subCategory.create(subcategory);
