@@ -6,16 +6,16 @@ exports.createProduct = async (req, res) => {
         if (!data || data.length === 0) {
             return res.status(400).send({ msg: "not found" });
         }
-        let productImages = [];
-        if (req.files) {
-            for (let i = 0; i < req.files.length; i++) {
-                let image = req.files[i].filename;
-                productImages.push(image);
-            }
-        }
+        // let productImages = [];
+        // if (req.files) {
+        //     for (let i = 0; i < req.files.length; i++) {
+        //         let image = req.files[i].filename;
+        //         productImages.push(image);
+        //     }
+        // }
         req.body.userId = req.user._id;
         req.body.categoryId = data._id;
-        req.body.productImages = productImages;
+        req.body.productImages = req.body.image;
         const productCreated = await product.create(req.body);
         console.log(`#### Product add successfully #### /n ${productCreated} `);
         res.status(201).send({
