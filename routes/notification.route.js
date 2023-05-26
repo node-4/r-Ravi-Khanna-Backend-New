@@ -4,7 +4,7 @@ const { authJwt, objectId } = require('../middlewares');
 
 // GET all notifications and conditions
 module.exports = (app) => {
-    app.get('/api/v1/admin/notifications', notificationsController.getAllNotifications);
+    app.post('/api/v1/admin/notifications',[authJwt.isAdmin], notificationsController.getAllNotifications);
 
     // GET a single term and condition by ID
     app.get('/api/v1/admin/notifications/:id',  notificationsController.getById);
