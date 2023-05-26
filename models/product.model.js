@@ -27,6 +27,10 @@ const schema = new mongoose.Schema(
             type: Number,
             required: true,
         },
+        discount: {
+            type: Number,
+            default: 0,
+        },
         stock: {
             type: String,
             required: true,

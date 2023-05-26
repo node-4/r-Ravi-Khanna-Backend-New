@@ -13,16 +13,10 @@ exports.createProduct = async (req, res) => {
                 productImages.push(image);
             }
         }
-        const productObj = {
-            userId: req.user._id,
-            categoryId: data._id,
-            productImages: productImages,
-            productName: req.body.productName,
-            description: req.body.description,
-            price: req.body.price,
-            stock: req.body.stock,
-        };
-        const productCreated = await product.create(productObj);
+        req.body.userId = req.user._id;
+        req.body.categoryId = data._id;
+        req.body.productImages = productImages;
+        const productCreated = await product.create(req.body);
         console.log(`#### Product add successfully #### /n ${productCreated} `);
         res.status(201).send({
             message: "Product add successfully",
@@ -37,7 +31,7 @@ exports.createProduct = async (req, res) => {
 };
 exports.get = async (req, res) => {
     try {
-        const data = await product.find().populate('categoryId userId');;
+        const data = await product.find().populate("categoryId userId");
         if (!data || data.length === 0) {
             return res.status(400).send({ msg: "not found" });
         }
