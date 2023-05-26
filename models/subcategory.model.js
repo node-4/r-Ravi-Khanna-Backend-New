@@ -4,20 +4,16 @@ const schema = new mongoose.Schema(
         userId: {
             type: mongoose.SchemaTypes.ObjectId,
             ref: "Admin",
-            required: true,
         },
         categoryId: {
             type: mongoose.SchemaTypes.ObjectId,
             ref: "category",
-            required: true,
         },
         name: {
             type: String,
-            required: true,
         },
         image: {
             type: String,
-            required: true,
         },
     },
     { timeseries: true }
