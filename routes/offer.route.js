@@ -15,7 +15,7 @@ const upload = multer({ storage: storage });
 module.exports = (app) => {
     app.get("/api/v1/admin/offer/:id", offerController.getId);
     app.post("/api/v1/admin/offer", offerController.getAll);
-    app.post("/api/v1/admin/create",upload.single("image"),[authJwt.isAdmin],offerController.create);
+    app.post("/api/v1/admin/create",[authJwt.isAdmin],offerController.create);
     app.patch("/api/v1/admin/offer/:id",[authJwt.isAdmin, objectId.validId],offerController.update);
     app.delete("/api/v1/admin/offer/:id",[authJwt.isAdmin, objectId.validId],offerController.delete);
 

@@ -1,15 +1,11 @@
 const Offer = require("../models/offer.model");
 exports.create = async (req, res) => {
     try {
-        let image;
-        if (req.file) {
-            image = req.file.filename;
-        }
         const offer = {
             title: req.body.title,
             description: req.body.description,
             amount: req.body.amount,
-            image: image,
+            image: req.body.image,
         };
         const offerCreated = await Offer.create(offer);
         console.log(
@@ -58,9 +54,6 @@ exports.getId = async (req, res) => {
 };
 exports.update = async (req, res) => {
     try {
-        if (req.file) {
-            req.body.image = req.file.filename;
-        }
         const data = await Offer.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
         });
