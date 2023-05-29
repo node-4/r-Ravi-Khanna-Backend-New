@@ -14,7 +14,7 @@ router.get(
 );
 
 // CREATE a new term and condition
-router.post("/admin/privacy", [authJwt.isAdmin], termsController.createTerm);
+router.post("/admin/createPrivacy", [authJwt.isAdmin], termsController.createTerm);
 
 // UPDATE a term and condition by ID
 router.put(
