@@ -10,7 +10,7 @@ module.exports = (app) => {
     app.get('/api/v1/admin/notifications/:id',  notificationsController.getById);
 
     // CREATE a new term and condition
-    app.post('/api/v1/admin/notifications', [authJwt.isAdmin], notificationsController.createNotification);
+    app.post('/api/v1/admin/createNotifications', [authJwt.isAdmin], notificationsController.createNotification);
 
     // UPDATE a term and condition by ID
     app.put('/api/v1/admin/notifications/:id', [authJwt.isAdmin, objectId.validId], notificationsController.updateNotification);
