@@ -4,7 +4,7 @@ const termsController = require('../controllers/privacy.controller');
 const { authJwt, objectId } = require('../middlewares');
 
 // GET all terms and conditions
-router.get('/admin/privacy', termsController.getAllTerms);
+router.post('/admin/privacy', [authJwt.isAdmin],  termsController.getAllTerms);
 
 // GET a single term and condition by ID
 router.get('/admin/privacy/:id', [objectId.validId], termsController.getTermById);
