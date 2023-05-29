@@ -6,6 +6,7 @@ module.exports = (app) => {
     app.get("/api/v1/admin/users", [authJwt.isAdmin], user.getAll);
     app.get("/api/v1/admin/users/:id", [authJwt.isAdmin, objectId.validId], user.get);
     app.delete("/api/v1/admin/users/:id", [authJwt.isAdmin, objectId.validId], user.delete);
+    app.put("/api/v1/admin/users/update", [authJwt.verifyToken], user.updateProfile);
 
     // users
     app.put("/api/v1/users/:id", [authJwt.verifyToken, objectId.validId], user.update);

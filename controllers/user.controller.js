@@ -26,7 +26,32 @@ exports.update = async (req, res) => {
         });
     }
 };
-
+exports.updateProfile = async (req, res) => {
+    try {
+        const { name, email, phone, password, kyc } = req.body;
+        // console.log({ name, email, phone, password });
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).send({ message: "not found" });
+        }
+        user.name = name || user.name;
+        user.email = email || user.email;
+        user.phone = phone || user.phone;
+        user.image = req.body.image || user.image;
+        user.kyc = kyc || user.kyc;
+        if (req.body.password) {
+            user.password = bcrypt.hashSync(password, 8) || user.password;
+        }
+        const updated = await user.save();
+        // console.log(updated);
+        res.status(200).send({ message: "updated", data: updated });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({
+            message: "internal server error " + err.message,
+        });
+    }
+};
 exports.getAll = async (req, res) => {
     try {
         const users = await User.find().lean().select({
