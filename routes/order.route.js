@@ -18,7 +18,7 @@ router.patch("/order/:id", [authJwt.verifyToken, objectId.validId], orderControl
 // Delete an order by ID
 router.delete("/order/:id", [authJwt.verifyToken, objectId.validId], orderController.deleteOrder);
 
-router.get("/admins/order", [authJwt.isAdmin], orderController.getOrders);
+router.post("/admins/order", [authJwt.isAdmin], orderController.getOrders);
 
 // Get an order by ID
 router.get("/admin/order/:id", [authJwt.isAdmin, objectId.validId], orderController.getOrderById);
