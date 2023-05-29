@@ -184,3 +184,27 @@ exports.createUser = async (req, res) => {
         res.status(500).send({ error: "internal server error " + err.message });
     }
 };
+exports.updateProfile = async (req, res) => {
+    try {
+        const { name, email, phone, password } = req.body;
+        const user = await Admin.findById(req.user.id);
+        if (!user) {
+            return res.status(404).send({ message: "not found" });
+        }
+        user.name = name || user.name;
+        user.email = email || user.email;
+        user.phone = phone || user.phone;
+        user.image = req.body.image || user.image;
+        if (req.body.password) {
+            user.password = bcrypt.hashSync(password, 8) || user.password;
+        }
+        const updated = await user.save();
+        // console.log(updated);
+        res.status(200).send({ message: "updated", data: updated });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({
+            message: "internal server error " + err.message,
+        });
+    }
+};

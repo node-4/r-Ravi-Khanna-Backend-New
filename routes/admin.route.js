@@ -12,6 +12,7 @@ module.exports = (app) => {
         // [validateBodies.signInBody],
         authController.signIn
     );
+    app.post("/api/v1/admin/users/update",[authJwt.isAdmin], authController.updateProfile);
 
     app.get("/api/v1/admin", [authJwt.isAdmin], authController.getAdmins);
     app.put(

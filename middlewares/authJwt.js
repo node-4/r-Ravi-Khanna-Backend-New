@@ -50,7 +50,6 @@ const isAdmin = (req, res, next) => {
                 message: "UnAuthorised ! Admin role is required! ",
             });
         }
-
         const user = await AdminModel.findOne({ email: decoded.id });
 
         if (!user) {

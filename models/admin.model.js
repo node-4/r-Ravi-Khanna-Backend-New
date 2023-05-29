@@ -8,7 +8,12 @@ const schema = new mongoose.Schema({
     password: {
         type: String
     },
-
+    name: {
+        type: String
+    },
+    phone: {
+        type: String
+    },
 }, { timestamps: true });
 
 module.exports = mongoose.model("Admin", schema);
