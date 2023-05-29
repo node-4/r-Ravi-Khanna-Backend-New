@@ -8,7 +8,7 @@ exports.getAllTerms = async (req, res, next) => {
             type: "PRIVACY POLICY",
         });
         if (termsAndConditions.length === 0) {
-            throw httpError(404, "Terms and conditions not found");
+            res.status(400).send({ success: false, message: "Privacy and policy not found" });
         }
         res.json(termsAndConditions);
     } catch (err) {

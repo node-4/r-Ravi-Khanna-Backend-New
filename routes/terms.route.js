@@ -4,7 +4,7 @@ const termsController = require('../controllers/terms.controller');
 const { authJwt, objectId } = require('../middlewares');
 
 // GET all terms and conditions
-router.get('/admin/terms', termsController.getAllTerms);
+router.post('/admin/terms', termsController.getAllTerms);
 
 // GET a single term and condition by ID
 router.get('/admin/terms/:id', [objectId.validId], termsController.getTermById);
