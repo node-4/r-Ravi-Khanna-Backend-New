@@ -11,7 +11,7 @@ module.exports = (app) => {
     app.post("/api/v1/auth/sociallogin", auth.socialLogin);
 
     app.post("/api/v1/forgotpassword", auth.forgotPassword);
-    app.get("/api/v1/forgotPasswordOtp/:id", auth.forgotPasswordOtp);
-    app.get("/api/v1/resetPassword/:id", auth.resetPassword);
+    app.post("/api/v1/forgotPasswordOtp/:id", auth.forgotPasswordOtp);
+    app.post("/api/v1/resetPassword/:id", auth.resetPassword);
 
 }
