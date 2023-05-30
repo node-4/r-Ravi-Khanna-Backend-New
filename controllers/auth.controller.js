@@ -187,22 +187,39 @@ const nodemailer = require("nodemailer");
 exports.forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
-        const otp = newOTP.generate(4, {alphabets: false,upperCase: false,specialChar: false,});
+        const otp = newOTP.generate(4, {
+            alphabets: false,
+            upperCase: false,
+            specialChar: false,
+        });
         const user = await User.findOne({ email: email });
         if (!user) {
-            return res.status(404).send({ message: "user not found ! not registered" });
+            return res
+                .status(404)
+                .send({ message: "user not found ! not registered" });
         } else {
-            const user1 = await User.findOneAndUpdate({ email },{ otp: otp, otpExpiration: Date.now() + 3600000 },{ new: true });
+            const user1 = await User.findOneAndUpdate(
+                { email },
+                { otp: otp, otpExpiration: Date.now() + 3600000 },
+                { new: true }
+            );
+            // const transporter = nodemailer.createTransport({
+            //     host: "smtp.gmail.com",
+            //     port: 587,
+            //     secure: false,
+            //     auth: {
+            //         user: "node2@flyweis.technology",
+            //         pass: "ayesha@9818#",
+            //     },
+            // });
             const transporter = nodemailer.createTransport({
-                host: "smtp.gmail.com",
+                host: "smtp.ethereal.email",
                 port: 587,
-                secure: false,
                 auth: {
-                    user: "node2@flyweis.technology",
-                    pass: "ayesha@9818#",
+                    user: "frieda.smitham40@ethereal.email",
+                    pass: "TURy68KCpFSsFyNfjs",
                 },
             });
-
             // Define the email options
             const mailOptions = {
                 to: email,
@@ -245,7 +262,7 @@ exports.forgotPasswordOtp = async (req, res) => {
         const otp = req.body.otp;
         const user = await User.findById(id);
         if (!user) {
-            return res.status(404).json({message: "User not found",});
+            return res.status(404).json({ message: "User not found" });
         }
         if (user.otp !== otp || user.otpExpiration < Date.now()) {
             return res.status(400).json({ message: "Invalid OTP" });
