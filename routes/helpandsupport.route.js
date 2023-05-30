@@ -5,5 +5,5 @@ module.exports = (app) => {
 app.post('/api/v1/help/createQuery', [authJwt.verifyToken], help.AddQuery);
 app.get('/api/v1/help', help.getAllHelpandSupport);
 app.get('/api/v1/admin/help', help.getAllHelpandSupportgetByuserId);
-app.delete('/delete/:id', help.DeleteHelpandSupport);
+app.delete('/api/v1/help/delete/:id', help.DeleteHelpandSupport);
 };
