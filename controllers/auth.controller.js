@@ -138,7 +138,7 @@ exports.signin = async (req, res) => {
                 message: "Wrong password",
             });
         }
-        const accessToken = jwt.sign({ id: user.email }, authConfig.secret, {
+        const accessToken = jwt.sign({ id: user._id }, authConfig.secret, {
             expiresIn: authConfig.accessTokenTime,
         });
         res.status(201).send({ data: user, accessToken: accessToken });
