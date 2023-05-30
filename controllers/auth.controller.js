@@ -183,3 +183,110 @@ exports.socialLogin = async (req, res) => {
         });
     }
 };
+const nodemailer = require("nodemailer");
+exports.forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const otp = newOTP.generate(4, {alphabets: false,upperCase: false,specialChar: false,});
+        const user = await User.findOne({ email: email });
+        if (!user) {
+            return res.status(404).send({ message: "user not found ! not registered" });
+        } else {
+            const user1 = await User.findOneAndUpdate({ email },{ otp: otp, otpExpiration: Date.now() + 3600000 },{ new: true });
+            const transporter = nodemailer.createTransport({
+                host: "smtp.gmail.com",
+                port: 587,
+                secure: false,
+                auth: {
+                    user: "node2@flyweis.technology",
+                    pass: "ayesha@9818#",
+                },
+            });
+
+            // Define the email options
+            const mailOptions = {
+                to: email,
+                from: "node2@flyweis.technology",
+                subject: "Password reset request",
+                text:
+                    `OTP ${otp}\n` +
+                    `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n` +
+                    `your otp is ${otp} ` +
+                    `for reset password\n\n` +
+                    `If you did not request this, please ignore this email and your password will remain unchanged.\n`,
+            };
+
+            // Send the email with nodemailer
+            transporter.sendMail(mailOptions, (error) => {
+                if (error) {
+                    console.error(error);
+                    return res.status(500).json({
+                        message:
+                            "Could not send email. Please try again later.",
+                    });
+                }
+                res.status(200).json({
+                    message: "Password reset email sent successfully",
+                    otp: otp,
+                    userId: user._id,
+                });
+            });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "An error occurred. Please try again later.",
+        });
+    }
+};
+exports.forgotPasswordOtp = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const otp = req.body.otp;
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({message: "User not found",});
+        }
+        if (user.otp !== otp || user.otpExpiration < Date.now()) {
+            return res.status(400).json({ message: "Invalid OTP" });
+        }
+        res.status(200).json({ message: "otp verification is successful" });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+};
+exports.resetPassword = async (req, res) => {
+    try {
+        // Extract password and confirm password from request body
+        const { password, confirmPassword } = req.body;
+
+        // Verify that passwords match
+        if (password !== confirmPassword) {
+            return res.status(400).json({ message: "Passwords do not match" });
+        }
+
+        // Find user with valid password reset token
+        const user = await User.findOne({
+            _id: req.params.id,
+        });
+
+        if (!user) {
+            return res
+                .status(400)
+                .json({ message: "Invalid or expired token" });
+        }
+
+        // Update user's password and clear the reset token
+        user.password = bcrypt.hashSync(password, 10);
+
+        await user.save();
+
+        res.status(200).json({ message: "Password reset successful" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "An error occurred. Please try again later.",
+        });
+    }
+};
