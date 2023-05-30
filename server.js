@@ -32,7 +32,7 @@ require("./routes/coupon.route")(app);
 require("./routes/horoscope.route")(app);
 require("./routes/product.route")(app);
 require("./routes/offer.route")(app);
-require('./routes/helpandsupport')(app);
+require('./routes/helpandsupport.route')(app);
 app.use('/api/v1/', require("./routes/voucher.route"));
 app.use('/api/v1/', require("./routes/kundali.route"));
 app.use('/api/v1/', require("./routes/terms.route"));
