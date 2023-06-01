@@ -7,7 +7,13 @@ const authConfig = require("../configs/auth.config");
 
 exports.signup = async (req, res) => {
     try {
+        var digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        let OTP = '';
+        for (let i = 0; i < 6; i++) {
+          OTP += digits[Math.floor(Math.random() * 108)];
+        }
         const data = {
+            referalcode: OTP,
             email: req.body.email,
             password: bcrypt.hashSync(req.body.password, 8),
         };
@@ -26,8 +32,14 @@ exports.signupWithPhone = async (req, res) => {
     try {
         const user = await User.findOne({ phone });
         if (!user) {
+            var digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            let referalcode = '';
+            for (let i = 0; i < 6; i++) {
+                referalcode += digits[Math.floor(Math.random() * 108)];
+            }
             const userObj = {};
             userObj.phone = phone;
+            userObj.referalcode = referalcode;
             userObj.otp = newOTP.generate(4, {
                 alphabets: false,
                 upperCase: false,
@@ -149,11 +161,18 @@ exports.signin = async (req, res) => {
 };
 exports.socialLogin = async (req, res) => {
     try {
-        const data = { email: req.body.email };
-        const user = await User.findOne({ email: data.email });
-        console.log(user);
+        const user = await User.findOne({ email: req.body.email});
         if (!user) {
-            const user = await User.create(data);
+            var digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            let referalcode = '';
+            for (let i = 0; i < 6; i++) {
+              referalcode += digits[Math.floor(Math.random() * 108)];
+            }
+            const obj = {
+                referalcode: referalcode,
+                email: req.body.email
+             }
+            const user = await User.create(obj);
             const accessToken = jwt.sign(
                 { id: user.email },
                 authConfig.secret,

@@ -86,3 +86,18 @@ exports.delete = async (req, res) => {
         });
     }
 };
+
+exports.getProfile = async (req, res) => {
+    try {
+        const users = await User.findById(req.user.id);
+        if (!users || users.length === 0) {
+            return res.status(404).send({ message: "user not found" });
+        }
+        res.status(200).send({ data: users });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({
+            message: "internal server error " + err.message,
+        });
+    }
+};
