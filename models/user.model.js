@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 const schema = new mongoose.Schema(
     {
+        refferalUser: [{
+            type: mongoose.SchemaTypes.ObjectId,
+            ref: "User",
+            required: true,
+        }],
         name: {
             type: String,
         },

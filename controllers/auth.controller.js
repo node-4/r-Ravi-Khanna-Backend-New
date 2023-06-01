@@ -2,26 +2,47 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/user.model");
 var newOTP = require("otp-generators");
 const jwt = require("jsonwebtoken");
-const authconfig = require("../configs/auth.config");
 const authConfig = require("../configs/auth.config");
 
 exports.signup = async (req, res) => {
     try {
-        var digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        let OTP = '';
+        var digits =
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        let OTP = "";
         for (let i = 0; i < 6; i++) {
-          OTP += digits[Math.floor(Math.random() * 108)];
+            OTP += digits[Math.floor(Math.random() * 108)];
         }
-        const data = {
-            referalcode: OTP,
-            email: req.body.email,
-            password: bcrypt.hashSync(req.body.password, 8),
-        };
-        const user = await User.create(data);
-        res.status(201).send({
-            message: "registered successfully ",
-            data: user,
-        });
+        if (req.body.refferalCode == null ||req.body.refferalCode == undefined) {
+            const data = {
+                referalcode: OTP,
+                email: req.body.email,
+                password: bcrypt.hashSync(req.body.password, 8),
+            };
+            const user = await User.create(data);
+            res.status(201).send({
+                message: "registered successfully ",
+                data: user,
+            });
+        }else{
+            let refferalCodeUser = await User.findOne({ referalcode: req.body.refferalCode });         ///////////// find refferal code
+            if (refferalCodeUser) {
+                const data = {
+                    referalcode: OTP,
+                    email: req.body.email,
+                    password: bcrypt.hashSync(req.body.password, 8),
+                };
+                const user = await User.create(data);
+                if(user){
+                 let updateWallet = await User.findOneAndUpdate({ _id: refferalCodeUser._id }, { $push: { refferalUser: user._id }, $set: { 'wallet.coin': refferalCodeUser.wallet.coin + 5} }, { new: true })
+                 if(updateWallet){
+                     res.status(201).send({message: "registered successfully ",data: user,});
+                 }
+                }
+            }else{
+                return res.status(400).send({ msg: "referal code not found" });
+            }
+        }
+    
     } catch (err) {
         console.log(err.message);
         res.status(500).send({ error: "internal server error " + err.message });
@@ -32,25 +53,37 @@ exports.signupWithPhone = async (req, res) => {
     try {
         const user = await User.findOne({ phone });
         if (!user) {
-            var digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            let referalcode = '';
+            var digits =
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            let referalcode = "";
             for (let i = 0; i < 6; i++) {
                 referalcode += digits[Math.floor(Math.random() * 108)];
             }
             const userObj = {};
             userObj.phone = phone;
             userObj.referalcode = referalcode;
-            userObj.otp = newOTP.generate(4, {
-                alphabets: false,
-                upperCase: false,
-                specialChar: false,
-            });
+            userObj.otp = newOTP.generate(4, {alphabets: false,upperCase: false,specialChar: false,});
             userObj.otpExpiration = new Date(Date.now() + 5 * 60 * 1000);
+            if (req.body.refferalCode == null ||req.body.refferalCode == undefined) {
             const user = await User.create(userObj);
             res.status(200).send({
                 message: "registered successfully ",
                 data: user,
             });
+           }else{
+            let refferalCodeUser = await User.findOne({ refferalCode: req.body.refferalCode });         ///////////// find refferal code
+            if (refferalCodeUser) {
+                const user = await User.create(userObj);
+                if(user){
+                    let updateWallet = await User.findOneAndUpdate({ _id: refferalCodeUser._id }, { $push: { refferalUser: user._id }, $set: { 'wallet.coin': refferalCodeUser.wallet.coin + 5} }, { new: true })
+                    if(updateWallet){
+                        res.status(201).send({message: "registered successfully ",data: user,});
+                    }
+                   }
+            }else{
+                return res.status(400).send({ msg: "referal code not found" });
+            }
+        }
         } else {
             res.status(409).send({ message: "Already Exist", data: [] });
         }
@@ -161,17 +194,18 @@ exports.signin = async (req, res) => {
 };
 exports.socialLogin = async (req, res) => {
     try {
-        const user = await User.findOne({ email: req.body.email});
+        const user = await User.findOne({ email: req.body.email });
         if (!user) {
-            var digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            let referalcode = '';
+            var digits =
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            let referalcode = "";
             for (let i = 0; i < 6; i++) {
-              referalcode += digits[Math.floor(Math.random() * 108)];
+                referalcode += digits[Math.floor(Math.random() * 108)];
             }
             const obj = {
                 referalcode: referalcode,
-                email: req.body.email
-             }
+                email: req.body.email,
+            };
             const user = await User.create(obj);
             const accessToken = jwt.sign(
                 { id: user.email },
