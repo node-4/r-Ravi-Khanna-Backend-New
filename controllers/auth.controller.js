@@ -3,6 +3,8 @@ const User = require("../models/user.model");
 var newOTP = require("otp-generators");
 const jwt = require("jsonwebtoken");
 const authConfig = require("../configs/auth.config");
+const nodemailer = require("nodemailer");
+const trackingData = require("../models/trackingData");
 
 exports.signup = async (req, res) => {
     try {
@@ -12,7 +14,7 @@ exports.signup = async (req, res) => {
         for (let i = 0; i < 6; i++) {
             OTP += digits[Math.floor(Math.random() * 108)];
         }
-        if (req.body.refferalCode == null ||req.body.refferalCode == undefined) {
+        if (req.body.refferalCode == null || req.body.refferalCode == undefined) {
             const data = {
                 referalcode: OTP,
                 email: req.body.email,
@@ -23,7 +25,7 @@ exports.signup = async (req, res) => {
                 message: "registered successfully ",
                 data: user,
             });
-        }else{
+        } else {
             let refferalCodeUser = await User.findOne({ referalcode: req.body.refferalCode });         ///////////// find refferal code
             if (refferalCodeUser) {
                 const data = {
@@ -32,17 +34,17 @@ exports.signup = async (req, res) => {
                     password: bcrypt.hashSync(req.body.password, 8),
                 };
                 const user = await User.create(data);
-                if(user){
-                 let updateWallet = await User.findOneAndUpdate({ _id: refferalCodeUser._id }, { $push: { refferalUser: user._id }, $set: { 'wallet.coin': refferalCodeUser.wallet.coin + 5} }, { new: true })
-                 if(updateWallet){
-                     res.status(201).send({message: "registered successfully ",data: user,});
-                 }
+                if (user) {
+                    let updateWallet = await User.findOneAndUpdate({ _id: refferalCodeUser._id }, { $push: { refferalUser: user._id }, $set: { 'wallet.coin': refferalCodeUser.wallet.coin + 5 } }, { new: true })
+                    if (updateWallet) {
+                        res.status(201).send({ message: "registered successfully ", data: user, });
+                    }
                 }
-            }else{
+            } else {
                 return res.status(400).send({ msg: "referal code not found" });
             }
         }
-    
+
     } catch (err) {
         console.log(err.message);
         res.status(500).send({ error: "internal server error " + err.message });
@@ -62,28 +64,28 @@ exports.signupWithPhone = async (req, res) => {
             const userObj = {};
             userObj.phone = phone;
             userObj.referalcode = referalcode;
-            userObj.otp = newOTP.generate(4, {alphabets: false,upperCase: false,specialChar: false,});
+            userObj.otp = newOTP.generate(4, { alphabets: false, upperCase: false, specialChar: false, });
             userObj.otpExpiration = new Date(Date.now() + 5 * 60 * 1000);
-            if (req.body.refferalCode == null ||req.body.refferalCode == undefined) {
-            const user = await User.create(userObj);
-            res.status(200).send({
-                message: "registered successfully ",
-                data: user,
-            });
-           }else{
-            let refferalCodeUser = await User.findOne({ refferalCode: req.body.refferalCode });         ///////////// find refferal code
-            if (refferalCodeUser) {
+            if (req.body.refferalCode == null || req.body.refferalCode == undefined) {
                 const user = await User.create(userObj);
-                if(user){
-                    let updateWallet = await User.findOneAndUpdate({ _id: refferalCodeUser._id }, { $push: { refferalUser: user._id }, $set: { 'wallet.coin': refferalCodeUser.wallet.coin + 5} }, { new: true })
-                    if(updateWallet){
-                        res.status(201).send({message: "registered successfully ",data: user,});
+                res.status(200).send({
+                    message: "registered successfully ",
+                    data: user,
+                });
+            } else {
+                let refferalCodeUser = await User.findOne({ refferalCode: req.body.refferalCode });         ///////////// find refferal code
+                if (refferalCodeUser) {
+                    const user = await User.create(userObj);
+                    if (user) {
+                        let updateWallet = await User.findOneAndUpdate({ _id: refferalCodeUser._id }, { $push: { refferalUser: user._id }, $set: { 'wallet.coin': refferalCodeUser.wallet.coin + 5 } }, { new: true })
+                        if (updateWallet) {
+                            res.status(201).send({ message: "registered successfully ", data: user, });
+                        }
                     }
-                   }
-            }else{
-                return res.status(400).send({ msg: "referal code not found" });
+                } else {
+                    return res.status(400).send({ msg: "referal code not found" });
+                }
             }
-        }
         } else {
             res.status(409).send({ message: "Already Exist", data: [] });
         }
@@ -236,7 +238,6 @@ exports.socialLogin = async (req, res) => {
         });
     }
 };
-const nodemailer = require("nodemailer");
 exports.forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
@@ -358,5 +359,29 @@ exports.resetPassword = async (req, res) => {
         res.status(500).json({
             message: "An error occurred. Please try again later.",
         });
+    }
+};
+exports.getUser = async (req, res) => {
+    try {
+        const users = await trackingData.findOne({ aff_unique2: req.params.id });
+        if (!users) {
+            return res.status(404).send({ status: 404, message: "Id not found" });
+        } else {
+            return res.status(200).send({ status: 200, message: "Id  found", data: users });
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({ message: "internal server error " + err.message, });
+    }
+};
+exports.addTrackingData = async (req, res) => {
+    try {
+        req.body.userId = req.body.aff_unique2;
+        const user = await trackingData.create(req.body);
+        res.status(200).send({ message: "registered successfully ", data: user, });
+
+    } catch (err) {
+        console.log(err.message);
+        res.status(500).send({ error: "internal server error " + err.message });
     }
 };
