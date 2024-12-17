@@ -25,13 +25,13 @@
     "mongoose": "^6.10.0",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.3",
-    "nodemon": "^2.0.20",
+    "nodemon": "^3.1.9",
     "otp-generators": "^1.0.3",
     "path": "^0.12.7",
     "razorpay": "^2.8.6",
     "serverless": "^3.27.0",
     "serverless-http": "^3.1.1",
     "uuid": "^9.0.0",
-    "vercel": "^29.3.6"
+    "vercel": "^28.18.5"
   }
 }
